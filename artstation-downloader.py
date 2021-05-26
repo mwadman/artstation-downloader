@@ -73,8 +73,7 @@ def get_artist_data(artist):
                 os._exit(1)
 
         # Append the pages data to the artist data
-        page_json_data = page_json['data']
-        json_artist_data += page_json_data
+        json_artist_data += page_json['data']
 
         # Output page progress
         ## Divided by 50, as that is the number of pictures that data is stored for per page
@@ -102,15 +101,10 @@ def create_directory(root_path, artist):
 def get_image_data(json_artist_data):
     json_all_image_data = []
 
-    # Create a list of image hashes (unique references to each image)
-    image_hashes = []
-    for image in json_artist_data:
-        image_hashes.append(image["hash_id"])
-
     # Add data for all images to 'json_all_image_data' variable
-    for hash in image_hashes:
+    for image in json_artist_data:
         # Concatenate base url with the artist name and page number
-        image_data_url = "https://www.artstation.com/projects/{}.json".format(hash)
+        image_data_url = "https://www.artstation.com/projects/{}.json".format(image["hash_id"])
 
         # Gets data from the url and turns it into json
         if verbose_mode:
