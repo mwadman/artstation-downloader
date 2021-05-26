@@ -51,6 +51,8 @@ def get_http(url):
 
 # Takes the name of the artist and returns a json file with data about all images they have
 def get_artist_data(artist):
+    print "Getting the artist data..."
+
     json_artist_data = []
     page = 1
 
@@ -99,6 +101,8 @@ def create_directory(root_path, artist):
 
 # Takes the artist data and returns the data for all images
 def get_image_data(json_artist_data):
+    print "Getting the images data..."
+
     json_all_image_data = []
 
     # Add data for all images to 'json_all_image_data' variable
@@ -199,6 +203,8 @@ def sanitise_title(title):
 
 # Matching image urls and downloads them as seperate files into the artist directory
 def download_images(artist_path, matching_images):
+    print "Downloading the images..."
+
     for image in matching_images:
         title, image_url = image
         # Gets the file extension for each image
