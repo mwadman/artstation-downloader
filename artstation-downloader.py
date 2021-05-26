@@ -123,7 +123,7 @@ def get_image_data(json_artist_data):
 
 # Takes the command line arguments and trims the json data to include only matching images
 def meet_image_conditions(args, json_all_image_data):
-    matching_image_urls = []
+    matching_images = []
 
     # Calculates the minimum and maximum ratios as a float from the arguments given
     if args.minimum_ratio:
@@ -182,21 +182,28 @@ def meet_image_conditions(args, json_all_image_data):
 
             # Append to "json_matching_image_data" if all matches are true.
             if image_width_match and image_height_match and orientation_match and ratio_match:
-                matching_image_urls.append(asset['image_url'])
+                matching_images.append((asset['title'], asset['image_url']))
 
     # Check if the list of matching images is empty
-    if not matching_image_urls:
+    if not matching_images:
         print "Your arguments didn't match any of the images from the artist, try changing your requirements"
         os._exit(1)
     else:
-        return matching_image_urls
+        return matching_images
+
+# Encode image title as a unicode string and replace slashes in it
+def sanitise_title(title):
+    utf = title.encode('utf-8')
+    sanitised = utf.replace('/', '_')
+    return sanitised
 
 # Matching image urls and downloads them as seperate files into the artist directory
-def download_images(artist_path, matching_image_urls):
-    for image_url in matching_image_urls:
+def download_images(artist_path, matching_images):
+    for image in matching_images:
+        title, image_url = image
         # Gets the file extension for each image
-        file_name = image_url.rsplit('?')[0]
-        file_name = file_name.rsplit('/')[-1]
+        file_name = image_url.rsplit('?')[0].rsplit('/')[-1]
+        file_name = '{}-{}'.format(sanitise_title(title), file_name)
 
         # Concatenates the artists directory with the file name and extension for the file path for each image
         file_path = os.path.join(artist_path, file_name)
@@ -224,9 +231,9 @@ def main():
     json_artist_data = get_artist_data(args.artist)
     artist_path = create_directory(args.destination, args.artist)
     json_all_image_data = get_image_data(json_artist_data)
-    matching_image_urls = meet_image_conditions(args, json_all_image_data)
+    matching_images = meet_image_conditions(args, json_all_image_data)
 
-    download_images(artist_path, matching_image_urls)
+    download_images(artist_path, matching_images)
 
 if __name__ == '__main__':
     main()
